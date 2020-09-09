@@ -13,9 +13,32 @@ const serverlessConfiguration: Serverless = {
       webpackConfig: "./webpack.config.js",
       includeModules: true,
     },
+    dynamodb: {
+      stages: ["dev"],
+      start: {
+        port: 8000,
+        inMemory: true,
+        migrate: true,
+        seed: true,
+      },
+      seed: {
+        dev: {
+          sources: [
+            {
+              table: "post",
+              sources: ["./migrations/posts.json"],
+            },
+          ],
+        },
+      },
+    },
   },
   // Add the serverless-webpack plugin
-  plugins: ["serverless-webpack", "serverless-offline"],
+  plugins: [
+    "serverless-webpack",
+    "serverless-dynamodb-local",
+    "serverless-offline",
+  ],
   provider: {
     name: "aws",
     runtime: "nodejs12.x",
@@ -27,13 +50,13 @@ const serverlessConfiguration: Serverless = {
     },
   },
   functions: {
-    productsGet: {
-      handler: "products/get.main",
+    postsGet: {
+      handler: "posts/get.main",
       events: [
         {
           http: {
             method: "get",
-            path: "products",
+            path: "posts",
           },
         },
       ],

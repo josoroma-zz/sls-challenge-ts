@@ -1,4 +1,4 @@
-# package directories
+# Package directories
 node_modules
 jspm_packages
 
@@ -7,3 +7,6 @@ jspm_packages
 
 # Webpack directories
 .webpack
+
+# The directory where the Local DynamoDB will write its database file
+.dynamodb

@@ -1,4 +1,4 @@
-import { Middleware } from "./";
+import { Middleware } from "micro-aws-lambda";
 
 export const removeFieldsFromResponse = (
   fieldsToRemove: string[]
