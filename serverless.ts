@@ -25,12 +25,15 @@ const serverlessConfiguration: Serverless = {
         dev: {
           sources: [
             {
-              table: "post",
-              sources: ["./migrations/posts.json"],
+              table: "Task",
+              sources: ["./migrations/tasks.json"],
             },
           ],
         },
       },
+    },
+    "serverless-offline": {
+      useChildProcesses: true,
     },
   },
   // Add the serverless-webpack plugin
@@ -50,16 +53,50 @@ const serverlessConfiguration: Serverless = {
     },
   },
   functions: {
-    postsGet: {
-      handler: "posts/get.main",
+    TaskGet: {
+      handler: "tasks/get.main",
       events: [
         {
           http: {
             method: "get",
-            path: "posts",
+            path: "tasks",
           },
         },
       ],
+    },
+  },
+  resources: {
+    Resources: {
+      Table: {
+        Type: "AWS::DynamoDB::Table",
+        Properties: {
+          TableName: "Task",
+          AttributeDefinitions: [
+            {
+              AttributeName: "id",
+              AttributeType: "S",
+            },
+            {
+              AttributeName: "createdAt",
+              AttributeType: "S",
+            },
+          ],
+          KeySchema: [
+            {
+              AttributeName: "id",
+              KeyType: "HASH",
+            },
+            {
+              AttributeName: "createdAt",
+              KeyType: "RANGE",
+            },
+          ],
+          ProvisionedThroughput: {
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5,
+          },
+        },
+      },
     },
   },
 };

@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@aws/dynamodb-data-mapper": "^0.7.3",
+    "@aws/dynamodb-data-mapper-annotations": "^0.7.3",
+    "aws-sdk": "^2.749.0",
     "micro-aws-lambda": "^4.0.3",
     "source-map-support": "^0.5.10"
   },
