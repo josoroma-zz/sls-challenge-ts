@@ -1,12 +1,31 @@
 import * as dynamoose from "dynamoose";
 
 const schemaJobRangeKey = new dynamoose.Schema({
-  userId: String,
+  userId: { type: String, hashKey: true },
   jobId: { type: String, rangeKey: true },
-  title: String,
+  title: {
+    type: String,
+    index: {
+      global: true,
+      name: "TitleIndex",
+      rangeKey: "title",
+    },
+  },
   body: String,
-  createdAt: String,
-  updatedAt: String,
+  createdAt: {
+    type: String,
+    index: {
+      name: "CreatedAtTitleIndex",
+      rangeKey: "createdAt",
+    },
+  },
+  updatedAt: {
+    type: String,
+    index: {
+      name: "UpdatedAtIndex",
+      rangeKey: "updatedAt",
+    },
+  },
 });
 
 const schemaTitleRangeKey = new dynamoose.Schema({
