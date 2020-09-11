@@ -10,7 +10,8 @@
     "aws-sdk": "^2.749.0",
     "dynamoose": "^2.3.0",
     "micro-aws-lambda": "^4.0.3",
-    "source-map-support": "^0.5.10"
+    "source-map-support": "^0.5.10",
+    "util": "^0.12.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",

@@ -25,8 +25,8 @@ const serverlessConfiguration: Serverless = {
         dev: {
           sources: [
             {
-              table: "Task",
-              sources: ["./migrations/tasks.json"],
+              table: "Job",
+              sources: ["./offline/dynamodb/jobs.json"],
             },
           ],
         },
@@ -51,15 +51,22 @@ const serverlessConfiguration: Serverless = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
     },
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: ["cognito-identity:*", "dynamodb:*", "s3:*", "states:*"],
+        Resource: ["*"],
+      },
+    ],
   },
   functions: {
-    TaskGet: {
-      handler: "tasks/get.main",
+    JobGet: {
+      handler: "jobs/get.main",
       events: [
         {
           http: {
             method: "get",
-            path: "tasks",
+            path: "jobs",
           },
         },
       ],
@@ -67,34 +74,98 @@ const serverlessConfiguration: Serverless = {
   },
   resources: {
     Resources: {
-      Table: {
+      CoursesTable: {
         Type: "AWS::DynamoDB::Table",
         Properties: {
-          TableName: "Task",
+          TableName: "Job",
           AttributeDefinitions: [
             {
-              AttributeName: "id",
+              AttributeName: "jobId",
+              AttributeType: "S",
+            },
+            {
+              AttributeName: "userId",
+              AttributeType: "S",
+            },
+            {
+              AttributeName: "title",
               AttributeType: "S",
             },
             {
               AttributeName: "createdAt",
+              AttributeType: "S",
+            },
+            {
+              AttributeName: "updatedAt",
               AttributeType: "S",
             },
           ],
           KeySchema: [
             {
-              AttributeName: "id",
+              AttributeName: "userId",
               KeyType: "HASH",
             },
             {
-              AttributeName: "createdAt",
+              AttributeName: "jobId",
               KeyType: "RANGE",
             },
           ],
-          ProvisionedThroughput: {
-            ReadCapacityUnits: 5,
-            WriteCapacityUnits: 5,
-          },
+          GlobalSecondaryIndexes: [
+            {
+              IndexName: "TitleIndex",
+              KeySchema: [
+                {
+                  AttributeName: "userId",
+                  KeyType: "HASH",
+                },
+                {
+                  AttributeName: "title",
+                  KeyType: "RANGE",
+                },
+              ],
+              Projection: {
+                ProjectionType: "INCLUDE",
+                NonKeyAttributes: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+          LocalSecondaryIndexes: [
+            {
+              IndexName: "CreatedAtIndex",
+              KeySchema: [
+                {
+                  AttributeName: "userId",
+                  KeyType: "HASH",
+                },
+                {
+                  AttributeName: "createdAt",
+                  KeyType: "RANGE",
+                },
+              ],
+              Projection: {
+                ProjectionType: "INCLUDE",
+                NonKeyAttributes: ["title"],
+              },
+            },
+            {
+              IndexName: "UpdatedAtIndex",
+              KeySchema: [
+                {
+                  AttributeName: "userId",
+                  KeyType: "HASH",
+                },
+                {
+                  AttributeName: "updatedAt",
+                  KeyType: "RANGE",
+                },
+              ],
+              Projection: {
+                ProjectionType: "INCLUDE",
+                NonKeyAttributes: ["title"],
+              },
+            },
+          ],
+          BillingMode: "PAY_PER_REQUEST",
         },
       },
     },
