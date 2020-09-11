@@ -1,4 +1,4 @@
-# Modern Serverless Deevelopment
+# Modern Serverless Development
 
 # Serverless Offline + TS + Micro AWS λ + Dynamoose
   
